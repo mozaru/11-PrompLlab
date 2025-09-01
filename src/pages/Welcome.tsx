@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, type To, type NavigateOptions } from 'react-router-dom';
 import { Badge } from '../components/Badge';
 import { ActionBar, type AppAction, type AppActionId } from '../components/ActionBar';
 import { caps, getApiKeyStatus } from '../lib/capabilities';
@@ -10,10 +10,17 @@ import {
 } from '../lib/projects';
 import '../styles/design.css';
 
-export default function Welcome() {
+type WelcomeProps = {
+  onNavigate?: (to: To, options?: NavigateOptions) => void;
+};
+
+export default function Welcome({ onNavigate }: WelcomeProps) {
   const [online, setOnline] = useState<boolean>(navigator.onLine);
   const [apiKeyPresent, setApiKeyPresent] = useState<boolean>(getApiKeyStatus() === 'present');
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
+
+  const navigateInternal = useNavigate();
+  const navigate = onNavigate ?? ((to: To, options?: NavigateOptions) => navigateInternal(to, options));
 
   const actions: AppAction[] = [
     { id: 'openConfig',  label: 'Começar agora',      variant: 'primary',   tooltip: 'Abrir Configurações Globais' },

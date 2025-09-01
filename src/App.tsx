@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate, Navigate, type To } from 'react-router-dom';
 import Welcome from './pages/Welcome';
 import Config from './pages/Config';
 import Chat from './pages/Chat';
@@ -52,7 +52,7 @@ export default function App() {
     <>
       <NavBar />
       <Routes>
-        <Route path="/" element={<Welcome onNavigate={(v) => navigate(v)} />} />
+        <Route path="/" element={<Welcome onNavigate={(v:To) => navigate(v)} />} />
         <Route path="/config" element={<Config />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/prompts" element={<Prompts />} />

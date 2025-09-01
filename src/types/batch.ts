@@ -19,3 +19,11 @@ export type BatchConfig = {
   outputSuffix: string;     // ex.: ".out.txt"
   maxFileSizeMB: number;    // segurança básica (ex.: 10)
 };
+
+export type BatchVectorItem = {
+  content: string;          // obrigatório
+  inputName?: string;       // exibição / auditoria
+  outputName?: string;      // caminho relativo ao dir de saída (FSA/ZIP)
+};
+
+export type BatchVector = BatchVectorItem[];
