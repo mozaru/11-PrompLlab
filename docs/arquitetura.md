@@ -1,5 +1,5 @@
 # Arquitetura do Projeto  
-**IA Chat Configurator**
+**11-PromptLab**
 
 ---
 

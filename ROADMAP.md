@@ -1,6 +1,6 @@
-# Roadmap – IA Chat Configurator
+# Roadmap – 11-PromptLab
 
-Este documento apresenta a visão de evolução do projeto **IA Chat Configurator**, organizado em etapas e versões previstas.  
+Este documento apresenta a visão de evolução do projeto **11-PromptLab**, organizado em etapas e versões previstas.  
 O roadmap pode ser ajustado conforme necessidades técnicas e de negócio.
 
 ---

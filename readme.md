@@ -1,6 +1,6 @@
-# IA Chat Configurator
+# 11-PromptLab
 
-**IA Chat Configurator** é um sistema de chat textual com IA projetado para permitir **configuração avançada de prompts**, **gestão de histórico**, **processamento em batch de arquivos** e **controle total sobre parâmetros da LLM** (ChatGPT/OpenAI).  
+**11-PromptLab** é um sistema de chat textual com IA projetado para permitir **configuração avançada de prompts**, **gestão de histórico**, **processamento em batch de arquivos** e **controle total sobre parâmetros da LLM** (ChatGPT/OpenAI).  
 
 O foco é **flexibilidade**, **controle total do contexto** e **execução 100% local**, onde **a única comunicação externa é com a API da OpenAI**.  
 O software é distribuído de forma gratuita para uso, mas o código-fonte é proprietário, de autoria de **Mozar Baptista da Silva e 11tech**.

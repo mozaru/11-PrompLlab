@@ -1,6 +1,6 @@
-# Política de Segurança – IA Chat Configurator
+# Política de Segurança – 11-PromptLab
 
-Este documento define as práticas de segurança a serem seguidas no desenvolvimento, uso e manutenção do **IA Chat Configurator**, de propriedade de **Mozar Baptista da Silva e 11tech**.
+Este documento define as práticas de segurança a serem seguidas no desenvolvimento, uso e manutenção do **11-PromptLab**, de propriedade de **Mozar Baptista da Silva e 11tech**.
 
 ---
 

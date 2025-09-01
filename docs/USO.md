@@ -1,6 +1,6 @@
-# Guia de Uso – IA Chat Configurator
+# Guia de Uso – 11-PromptLab
 
-Este documento explica como utilizar o **IA Chat Configurator**, desde a configuração inicial até a execução em lote de arquivos.
+Este documento explica como utilizar o **11-PromptLab**, desde a configuração inicial até a execução em lote de arquivos.
 
 ---
 

@@ -1,6 +1,6 @@
-# Código de Conduta – IA Chat Configurator
+# Código de Conduta – 11-PromptLab
 
-Este documento estabelece as diretrizes de conduta para todos os colaboradores internos envolvidos no desenvolvimento do **IA Chat Configurator**, de propriedade de **Mozar Baptista da Silva e 11tech**.
+Este documento estabelece as diretrizes de conduta para todos os colaboradores internos envolvidos no desenvolvimento do **11-PromptLab**, de propriedade de **Mozar Baptista da Silva e 11tech**.
 
 ---
 
@@ -61,6 +61,6 @@ Dúvidas ou questões sobre este Código de Conduta devem ser encaminhadas para:
 ## 7. Nota Final
 
 Este Código de Conduta é parte integrante da governança do projeto.  
-Ao contribuir com o **IA Chat Configurator**, você concorda em respeitar estas diretrizes.
+Ao contribuir com o **11-PromptLab**, você concorda em respeitar estas diretrizes.
 
 ---

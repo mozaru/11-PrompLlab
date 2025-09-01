@@ -18,7 +18,7 @@ e este projeto segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ## [0.1.0] – 2025-09-01
 ### Adicionado
-- Versão inicial do projeto **IA Chat Configurator**.
+- Versão inicial do projeto **11-PromptLab**.
 - Criação do repositório.
 - Definição da licença de uso: **uso livre, código fechado**.
 - Setup inicial da documentação do projeto.

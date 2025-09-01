@@ -1,12 +1,12 @@
-# FAQ – IA Chat Configurator
+# FAQ – 11-PromptLab
 
-Este documento reúne as perguntas mais frequentes sobre o **IA Chat Configurator**.
+Este documento reúne as perguntas mais frequentes sobre o **11-PromptLab**.
 
 ---
 
 ## 🧑‍💻 Uso Geral
 
-### O que é o IA Chat Configurator?
+### O que é o 11-PromptLab?
 É uma aplicação que permite configurar de forma detalhada como você interage com modelos de linguagem (LLMs), como o ChatGPT.  
 Você pode definir system prompt, user prompt com placeholders dinâmicos, controlar o histórico da conversa e processar arquivos em lote (batch).
 

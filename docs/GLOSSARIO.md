@@ -1,4 +1,4 @@
-# Glossário – IA Chat Configurator
+# Glossário – 11-PromptLab
 
 Este glossário reúne os principais termos técnicos usados no projeto, servindo como referência para usuários e colaboradores.
 

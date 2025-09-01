@@ -1,11 +1,11 @@
 # Visão e Escopo do Projeto  
-**IA Chat Configurator**  
+**11-PromptLab**  
 
 ---
 
 ## 1. Visão Geral
 
-O **IA Chat Configurator** é uma aplicação que permite a **configuração avançada de interações com modelos de linguagem (LLMs)**, como o ChatGPT (OpenAI), oferecendo ao usuário controle total sobre:
+O **11-PromptLab** é uma aplicação que permite a **configuração avançada de interações com modelos de linguagem (LLMs)**, como o ChatGPT (OpenAI), oferecendo ao usuário controle total sobre:
 
 - **Prompts do sistema (System Prompt)**  
 - **Prompts do usuário (User Prompt)** com placeholders dinâmicos  
@@ -146,7 +146,7 @@ Fornecer uma ferramenta que permita a **configuração detalhada de conversas co
 
 ## 9. Conclusão
 
-O **IA Chat Configurator** tem como diferencial:  
+O **11-PromptLab** tem como diferencial:  
 - **Controle total** do contexto de interação com IA.  
 - **Execução local** sem dependência de infraestrutura de terceiros.  
 - **Transparência** no processo de geração (preview do contexto, placeholders claros).  

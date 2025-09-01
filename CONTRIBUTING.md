@@ -1,5 +1,5 @@
 # Guia de Contribuição  
-**IA Chat Configurator**
+**11-PromptLab**
 
 Este documento orienta os colaboradores internos (Mozar + equipe 11tech) sobre como contribuir com o desenvolvimento do projeto.
 
