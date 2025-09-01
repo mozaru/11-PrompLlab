@@ -1,0 +1,44 @@
+# Node / JS / TS
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs (Vite, React)
+dist/
+build/
+.cache/
+.temp/
+
+# Tauri
+/src-tauri/target/
+src-tauri/Cargo.lock
+
+# Rust (gerado pelo Tauri)
+*.rs.bk
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs / Editors
+.vscode/
+.idea/
+*.swp
+
+# Env files (se usar API keys para dev)
+.env
+.env.*
+!.env.example
+
+# Coverage / Tests
+coverage/
+.nyc_output/

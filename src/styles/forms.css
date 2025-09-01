@@ -1,0 +1,37 @@
+.page { max-width: 900px; margin: 0 auto; padding: 24px; }
+.form h1 { margin: 0 0 8px; font-size: 24px; }
+.form h2 { margin: 16px 0 8px; font-size: 18px; }
+.muted { color: var(--text-2); margin-top: 0; }
+
+.group { margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+
+.field { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+label { font-size: 14px; color: var(--text); }
+
+.input {
+  height: 40px; padding: 8px 12px; border: 1px solid var(--border);
+  border-radius: 6px; background: var(--panel-2); color: var(--text);
+}
+.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(38,166,154,0.25); }
+
+select.input { height: 40px; }
+
+textarea.input {
+  height: auto;          
+  min-height: 160px;    
+  resize: vertical;
+  line-height: 1.4;
+  width: 100%;
+}
+
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { padding: 8px; border-bottom: 1px solid var(--border); }
+.mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+.secret-input { display: flex; gap: 8px; align-items: center; }
+.btn-ghost { background: transparent; border-color: var(--border); }
+
+.radio-row { display: flex; gap: 16px; }
+.radio { display: inline-flex; align-items: center; gap: 6px; color: var(--text); }
+
+.hint { color: var(--text-2); font-size: 13px; margin: 2px 0 0; }

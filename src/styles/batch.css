@@ -1,0 +1,10 @@
+.fsa-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+
+.bar { height: 10px; background: #1a1a1a; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; position: relative; }
+.bar .ok { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ok); }
+.bar .err { position: absolute; top: 0; bottom: 0; background: var(--err); right: 0; width: 0; }
+
+@media (max-width: 720px) {
+  .fsa-row, .grid-2 { grid-template-columns: 1fr; }
+}

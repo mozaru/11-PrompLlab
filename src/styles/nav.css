@@ -1,0 +1,12 @@
+.navbar {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; gap: 16px;
+  padding: 10px var(--container-pad);
+  border-bottom: 1px solid var(--border);
+  background: rgba(18,18,18,0.9); backdrop-filter: blur(6px);
+}
+.navbar-brand { font-weight: 700; letter-spacing: .2px; margin-right: 8px; }
+.navbar-right { margin-left: auto; }
+
+.navlink { color: var(--text); text-decoration: none; display: inline-block; }
+.navlink.active { color: #fff; font-weight: 600; }

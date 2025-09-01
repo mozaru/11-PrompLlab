@@ -1,0 +1,86 @@
+.chat-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* mantém tela cheia */
+  padding: 16px;
+}
+.chat-header { padding: 8px 0 12px; }
+.chat-main {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+.chat-footer { margin-top: 8px; }
+.chat-actions { margin-top: 8px; }
+
+.alert { margin: 8px 0; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--panel); }
+.alert.error { border-color: var(--err); color: var(--err); }
+
+.chat-list { display: flex; flex-direction: column; gap: 12px; }
+
+.chat-input { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; }
+.input.ta { min-height: 64px; resize: vertical; }
+
+.icon-btn {
+  background: transparent; border: none; color: var(--text-2);
+  cursor: pointer; padding: 2px 6px; border-radius: 4px; font-size: 12px;
+}
+.icon-btn:hover { background: #2a2a2a; color: var(--text); }
+
+.bubble {
+  max-width: min(80%, 80ch);
+  min-width: 20em;
+  padding: 6px 0;
+  border: none;
+  background: transparent;
+  border-radius: 0; /* borda só no conteúdo */
+}
+
+.bubble-user { align-self: flex-end; }
+.bubble-ai   { align-self: flex-start; }
+
+/* meta (Você · hora) fica fora da borda */
+.bubble-meta {
+  display: flex; gap: 8px; font-size: 12px; color: var(--text-2); margin-bottom: 4px;
+}
+
+/* AQUI fica a borda leve e o bg distinto por papel */
+.bubble-content {
+  padding: 10px 12px;
+  border: 1px solid var(--bubble-ai-border);
+  background: var(--bubble-ai-bg);
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06) inset; /* bem sutil */
+}
+
+.bubble-user .bubble-content {
+  border-color: var(--bubble-user-border);
+  background: var(--bubble-user-bg);
+}
+
+.bubble-ai   .bubble-content { border-top-left-radius: 6px; }
+.bubble-user .bubble-content { border-top-right-radius: 6px; }
+
+/* texto */
+.bubble-content pre { margin: 0; white-space: pre-wrap; word-break: break-word; }
+.bubble-error { color: var(--err); }
+
+.tool-btn {
+  background: transparent;
+  border: 0.5px solid var(--border);
+  color: var(--text-2);
+  cursor: pointer;
+  padding: 0px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.tool-btn:hover { background: #2a2a2a; color: var(--text); }
+.tool-icon { line-height: 1; }
+
+/* responsivo */
+@media (max-width: 640px) {
+  .bubble { max-width: 100%; }
+}

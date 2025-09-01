@@ -1,0 +1,94 @@
+/* Tema escuro: preto/grafite + um acento (ajuste a cor .accent abaixo) */
+:root {
+  --bg: #121212;
+  --panel: #1e1e1e;
+  --panel-2: #181818;
+  --border: #2c2c2c;
+  --text: #e0e0e0;
+  --text-2: #a0a0a0;
+  --accent: #26a69a; /* verde-água. Se preferir azul ciano: #00bcd4 */
+  --ok: #4caf50;
+  --warn: #ffc107;
+  --err: #f44336;
+  --container-max: 1200px;
+  --container-pad: clamp(12px, 2vw, 24px);
+  
+  --border-soft: #2a2a2a;
+  --bubble-ai-bg: var(--panel-2);
+  --bubble-ai-border: var(--border-soft);
+  /* leve tom puxando pro accent só no user */
+  --bubble-user-bg: #1d2221;
+  --bubble-user-border: #2b3a37;
+}
+
+:root.compacto { --container-max: 900px; }
+:root.medio { --container-max: 1200px; }
+:root.full { --container-max: 100%; }
+
+* { box-sizing: border-box; }
+html, body, #root { 
+    min-height: 100vh;
+    width: 100vw; 
+}
+
+.welcome-root,
+.chat-page,
+.page {
+  width: min(var(--container-max), 100%);
+  margin: 0 auto;
+  padding-inline: var(--container-pad);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+code, pre, .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.welcome-root { max-width: 1000px; margin: 0 auto; padding: 24px; }
+.welcome-header { text-align: center; margin-bottom: 24px; }
+.app-title { margin: 8px 0 0; font-size: 28px; font-weight: 700; }
+.app-subtitle { color: var(--text-2); margin-top: 4px; }
+
+.action-bar { display: flex; gap: 12px; justify-content: center; margin-top: 16px; }
+
+.cta-row { display: flex; gap: 12px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+.btn {
+  min-height: 40px; padding: 8px 16px; border: 1px solid var(--border);
+  background: var(--panel); color: var(--text); border-radius: 6px; cursor: pointer;
+}
+.btn:hover { background: #2e2e2e; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn-primary:hover { filter: brightness(1.05); }
+.btn-secondary { background: var(--panel); }
+
+.btn-danger {
+  background: #f44336; border-color: #f44336; color: #fff;
+}
+.btn-danger:hover { filter: brightness(1.05); }
+
+.welcome-main { display: grid; gap: 16px; grid-template-columns: 1fr; }
+.card {
+  background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px;
+}
+.card h2 { margin: 0 0 8px; font-size: 18px; }
+.bullets { margin: 8px 0 0 18px; color: var(--text); }
+.bullets li { margin: 6px 0; }
+
+.badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px; font-size: 13px; border: 1px solid var(--border);
+  background: var(--panel-2); color: var(--text);
+}
+.badge--ok { border-color: var(--ok); color: var(--ok); }
+.badge--warn { border-color: var(--warn); color: var(--warn); }
+.badge--error { border-color: var(--err); color: var(--err); }
+
+.hint { margin-top: 6px; color: var(--text-2); font-size: 14px; }

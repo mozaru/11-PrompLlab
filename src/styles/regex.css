@@ -1,0 +1,30 @@
+.table-wrap { overflow: auto; }
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th, .table td {
+  border-bottom: 1px solid var(--border);
+  padding: 8px;
+  vertical-align: top;
+}
+.table th:nth-child(4), .table td:nth-child(4) { /* coluna Grupo */
+  width: 180px;
+}
+.table th { text-align: left; color: var(--text-2); font-weight: 500; }
+
+.flags { display: flex; gap: 8px; align-items: center; }
+.flag { display: inline-flex; align-items: center; gap: 6px; }
+
+.actions { white-space: nowrap; display: flex; gap: 6px; }
+.status { white-space: nowrap; }
+
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  display: flex; align-items: center; justify-content: center; z-index: 100;
+}
+.modal {
+  width: min(800px, 95vw);
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px;
+}
