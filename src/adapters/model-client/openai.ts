@@ -62,15 +62,30 @@ function convertToOpenAITool(tool: AgentTool) {
   };
 }
 
+function renderRegexTemplate(template: string, groups: Record<string, string>, params: Record<string, any>): string {
+  return template.replace(/\${(.*?)}/g, (_, key) => {
+    return groups[key] !== undefined ? groups[key] :
+           params[key] !== undefined ? params[key] : '';
+  });
+}
+
 export async function executeTool(params: OpenAIChatParams, tool: AgentTool, args: Record<string, any>): Promise<string> {
   switch (tool.type) {
     case 'regex': {
       const regexStr = interpolatePlaceholders(tool.regexTemplate, args);
-      const re = new RegExp(regexStr, `g`+tool.flags?.join(""));
-      const matches = tool.baseText.matchAll(re).toArray();
-      const group = tool.group!=null ? parseInt("0"+tool.group) : 0;
-      const match = matches.length>0 && matches[0].length>group?matches[0][group] : '';
-      return match || tool.defaultValue || '';
+      const re = new RegExp(regexStr, `g` + (tool.flags?.join("") || ""));
+      const matches = Array.from(tool.baseText.matchAll(re));
+      const groups:Record<string | number, string> = {}; 
+      for (const match of matches) {
+        match.forEach((value, index) => {
+          if (value !== undefined)
+            groups[String(index)] = value;
+        });
+        if (match.groups)
+          Object.assign(groups, match.groups);
+      }
+      const value = renderRegexTemplate(tool.template, groups, args);
+      return value;
     }
     case 'prompt': {
       const userPrompt = interpolatePlaceholders(tool.promptTemplate, args);
@@ -80,6 +95,18 @@ export async function executeTool(params: OpenAIChatParams, tool: AgentTool, arg
         { role: 'user', content: userPrompt },
       ]);
       return result;
+    }
+    case 'const':{
+      return interpolatePlaceholders(tool.value, args);
+    }
+    case 'restapi':{
+      const url:string = interpolatePlaceholders(tool.endpoint,args);
+      const method:string = interpolatePlaceholders(tool.method,args);
+      const headers:HeadersInit = Object.fromEntries(Object.entries(tool.headers).map(([key, value]) => [ key, interpolatePlaceholders(value, args) ]) );
+      const body:string = interpolatePlaceholders(tool.strJsonBody,args);
+      const r = await fetch(url, { method, headers, body: method=='POST'||method=='UPDATE'||method=='PATH'?body:undefined });
+      if (!r.ok) throw new Error(`call api ${tool.name} error HTTP ${r.status}`);
+      return await r.text();
     }
     case 'function': {
       try {

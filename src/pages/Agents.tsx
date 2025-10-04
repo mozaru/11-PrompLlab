@@ -11,7 +11,6 @@ import '../styles/design.css';
 import '../styles/modal.css';
 import type { Placeholder, RegexFlag, TestResult } from '../types/placeholders';
 
-
 type AgentParam = { name: string; type: string, value:string };
 
 function getValueFromAgentParam(p:AgentParam) : any
@@ -19,7 +18,7 @@ function getValueFromAgentParam(p:AgentParam) : any
     switch(p.type)
     {
         case 'number': return p.value?parseFloat(p.value):0;
-        case 'boolean': return p.value? (p.value.toLowerCase()[0]=='t') : false;
+        case 'boolean': return ['true', '1', 'yes', 'y', 'sim'].includes(p.value?.toLowerCase() ?? '');
         default: return p.value;
     }
 }
@@ -34,7 +33,7 @@ function createEmptyAgent(type: AgentTool['type']): AgentTool {
       regexTemplate: '',
       baseText: '',
       flags: [],
-      group: undefined,
+      template: '${0}',
       defaultValue: '',
     };
   }
@@ -57,6 +56,25 @@ function createEmptyAgent(type: AgentTool['type']): AgentTool {
     };
   }
 
+  if (type === 'const') {
+    return {
+      ...base,
+      type: 'const',
+      value: ''
+    };
+  }
+
+  if (type === 'restapi') {
+    return {
+      ...base,
+      type: 'restapi',
+      endpoint: 'http:\\<url>',
+      method:'POST',
+      headers:{ 'Authorization': 'Bearer <api-key>', 'Content-Type': 'application/json' },
+      strJsonBody: "{}"
+    };
+  }
+
   throw new Error('Tipo inválido');
 }
 
@@ -75,7 +93,7 @@ export default function Agents() {
     name: 'output', // nome arbitrário, pois é um único regex por agente
     regex: '',
     flags: [],
-    group: undefined,
+    template: "${0}",
     default: '',
     });
   const [regexExampleText, setRegexExampleText] = useState('');
@@ -104,31 +122,103 @@ export default function Agents() {
     }
   };
 
-  const syncParamsToEditing = (): Record<string, any> => {
-    const parameters = Object.fromEntries(agentParams.map(p => [p.name, { type: p.type }]));
-    if (editing?.type === 'regex')  return { parameters, regexTemplate: regexPlaceholder.regex, baseText: regexExampleText, flags: regexPlaceholder.flags ?? [], group: regexPlaceholder.group, defaultValue: regexPlaceholder.default ?? '', };
-    if (editing?.type === 'prompt') return { systemPrompt: promptSystem, promptTemplate: promptUser, parameters };
-    if (editing?.type === 'function') return { functionName: funcName, functionCode: funcCode, parameters };
-    return {};
-  };
+  const buildAgentWithArgs = (editing: AgentTool, paramList: AgentParam[]): { agent: AgentTool, args: Record<string, any> } => {
+    const parameters = Object.fromEntries(paramList.map(p => [p.name, { type: p.type }]));
+    const args = paramList.reduce((acc, p) => {
+      acc[p.name] = getValueFromAgentParam(p);
+      return acc;
+    }, {} as Record<string, any>);
+
+    const extra = editing.type === 'regex' ? {
+      regexTemplate: regexPlaceholder.regex,
+      baseText: regexExampleText,
+      flags: regexPlaceholder.flags,
+      template: regexPlaceholder.template ?? '', 
+      defaultValue: regexPlaceholder.default ?? '',
+    } : editing.type === 'prompt' ? {
+      systemPrompt: promptSystem,
+      promptTemplate: promptUser,
+    } : editing.type === 'function' ? {
+      functionName: funcName,
+      functionCode: funcCode,
+    } : editing.type === 'restapi' ? {
+      endpoint: editing.endpoint,
+      method: editing.method,
+      headers: editing.headers,
+      strJsonBody: editing.strJsonBody
+    } : editing.type === 'const' ? {
+      value: editing.value
+    } : {
+    }
+
+    return {
+      agent: {
+        ...editing,
+        ...extra,
+        parameters,
+      },
+      args,
+    };
+  }
+
+  const isValidIdentifier = (id:string) =>{
+    id = id.trim();
+    const identifierRegex = /^[a-zA-Z_][0-9a-zA-Z_]*$/;
+    return identifierRegex.test(id.trim());
+  }
+  const isDuplicatedAgents = (name:string) =>{
+    name = name.trim().toLocaleLowerCase();
+    const names = agents.filter( p => p.name.trim().toLocaleLowerCase() == name && editing?.id!=p.id)
+    return names.length>0;
+  }
+  const isDuplicatedParams = () =>{
+    const names = agentParams.map(p => p.name.trim());
+    return new Set(names).size !== names.length;
+  }
+  
+  const isValidParamNames = () => {
+    const names = agentParams.map(p => p.name.trim());
+    return names.every(name => isValidIdentifier(name));
+  }
+
+  const isDuplicatedParamName = (name:string) => {
+    name = name.trim().toLocaleLowerCase();
+    const names = agentParams.filter( p => p.name.trim().toLocaleLowerCase() == name)
+    return names.length>1;
+  }
 
   const handleSave = () => {
     if (!editing) return;
     if (!editing.name.trim()) return alert('Nome é obrigatório.');
 
-    const partial = syncParamsToEditing();
+    if (!isValidIdentifier(editing.name))
+    {
+      alert('O Nome do agente deve ser um identificador valido!\nSó pode iniciar com letra ou _\nSó pode conter letras, numeros e sublinhado.');
+      return;
+    }
 
-    const newAgent: AgentTool = {
-        ...editing,
-        ...partial, // espalha regexTemplate, functionName, etc no nível raiz
-        parameters: partial.parameters, // mantém os parâmetros no lugar certo
-    };
+    if (isDuplicatedAgents(editing.name)) {
+      alert('Nome do agente deve ser únicos.');
+      return;
+    }
 
-    const exists = agents.find(a => a.name === editing.name);
+    if (isDuplicatedParams()){
+      alert('Nomes de parâmetros devem ser únicos.');
+      return;
+    }
+
+    if (!isValidParamNames()){
+      alert('Nomes de parâmetros devem ser identificadores validos.');
+      return;
+    }
+    
+    const { agent, args } = buildAgentWithArgs(editing!, agentParams);
+
+    const exists = agents.find(a => a.id === editing.id);
     if (exists) {
-      updateAgent(editing.name, newAgent);
+      updateAgent(editing.id!, agent);
     } else {
-      addAgent(newAgent);
+      addAgent(agent);
     }
 
     setEditing(null);
@@ -148,7 +238,7 @@ export default function Agents() {
         name: 'output',
         regex: agent.regexTemplate ?? '',
         flags: agent.flags ?? [],
-        group: agent.group,
+        template: agent.template,
         default: agent.defaultValue ?? '',
     });
     setRegexExampleText(agent.baseText ?? '');
@@ -158,11 +248,16 @@ export default function Agents() {
     } else if (agent.type === 'function') {
       setFuncName(agent.functionName ?? '');
       setFuncCode(agent.functionCode ?? '');
+    } else if (agent.type === 'const') {
+      // nothing needed, value already in agent
+    } else if (agent.type === 'restapi') {
+      // nothing needed, endpoint/method/headers already in agent
     }
   };
 
   const executeAgentTest = async (agent:AgentTool, args:Record<string, any>) => {
     try {
+        // Zustand permite acesso direto ao estado fora dos hooks
         const settings = useSettings.getState();
         const apiKey = settings.readApiKeyEffective();
 
@@ -176,42 +271,38 @@ export default function Agents() {
         };
         const response = await executeTool(params, agent, args);
         setTestResult({
-        name: editing.name,
+        name: editing?.name ?? "",
         value: response,
-        status: 'success',
-        group: editing.group,
-        error: null
+        status: response!="" ? 'matched_non_empty': 'matched_empty',
+        error: undefined
         });
     } catch (err: any) {
         setTestResult({
-        name: editing.name,
-        value: editing.default ?? '',
-        status: 'fail',
-        group: editing.group,
+        name: editing?.name ?? "",
+        value: '',
+        status: 'no_match',
         error: String(err.message ?? err),
         });
     }
   }
 
   const testAgent = async () => {
-    const partial = syncParamsToEditing();
-
-    const newAgent: AgentTool = {
-        ...editing,
-        ...partial, // espalha regexTemplate, functionName, etc no nível raiz
-        parameters: partial.parameters, // mantém os parâmetros no lugar certo
-    };
-    const args:Record<string, any>=  agentParams.reduce((acc:Record<string, any>, x:AgentParam) => { acc[x.name] = getValueFromAgentParam(x); return acc; }, {});
-    executeAgentTest(newAgent, args);
+    const { agent, args } = buildAgentWithArgs(editing!, agentParams);
+    executeAgentTest(agent, args);
   }
 
   const handleTest = async () => {
-    if (!isTesting) return;
-    executeAgentTest(isTesting, testArgs);
+    const paramList = Object.entries(isTesting?.parameters ?? {}).map(([name, def]: any) => ({
+      name,
+      type: def.type ?? 'string',
+      value: testArgs[name] ?? '',
+    }));
+    const { agent, args } = buildAgentWithArgs(isTesting!, paramList);
+    executeAgentTest(agent, args);
   };
 
   const addParam = () => {
-    setAgentParams([...agentParams, { name: '', type: 'string' }]);
+    setAgentParams([...agentParams, { name: '', type: 'string', value: '' }]);
   };
 
   const removeParam = (index: number) => {
@@ -251,7 +342,7 @@ export default function Agents() {
                             <div className='btn-tool-bar'>
                                 <button className="btn btn-tool edit" onClick={() =>handleEditAgent(agent)}>✏️</button>
                                 <button className="btn btn-tool test" onClick={() => setIsTesting(agent)}>🧪</button>
-                                <button className="btn btn-tool remove" onClick={() => { if (confirm(`Remover agente "${agent.name}"?`)) { removeAgent(agent.name); }}}>🗑</button>
+                                <button className="btn btn-tool remove" onClick={() => { if (confirm(`Remover agente "${agent.name}"?`)) { removeAgent(agent.id!); }}}>🗑</button>
                             </div>
                           </td>
                         </tr>
@@ -275,7 +366,8 @@ export default function Agents() {
                     <div className="grid-2">
                         <div className="field">
                             <label>Nome:</label>
-                            <input className="input" value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} />
+                            <input className={`input ${isDuplicatedAgents(editing.name) || !isValidIdentifier(editing.name) ? 'input-error' : ''}`} 
+                                value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} />
                         </div>
                         <div className="field">
                             <label>Descrição:</label>
@@ -288,13 +380,16 @@ export default function Agents() {
                             value={editing.type}
                             onChange={(e) => {
                                 const type = e.target.value as AgentTool['type'];
-                                setEditing({ ...editing, type, params: {} });
-                                setAgentParams([]);
+                                setEditing({ ...editing, type, params:{} });
+                                const copy = [...agentParams];
+                                setAgentParams(copy);
                             }}
                             >
                             <option value="regex">Regex</option>
                             <option value="prompt">Prompt</option>
                             <option value="function">Função JS</option>
+                            <option value="const">Constante</option>
+                            <option value="restapi">rest api</option>
                             </select>
                         </div>
                     </div>
@@ -308,7 +403,7 @@ export default function Agents() {
                             <tr>
                             <th>Regex</th>
                             <th>Flags</th>
-                            <th>Grupo</th>
+                            <th>Template</th>
                             <th>Default</th>
                             </tr>
                         </thead>
@@ -345,9 +440,9 @@ export default function Agents() {
                                     <input
                                         className="input"
                                         style={{width: "4em"}}
-                                        value={regexPlaceholder.group ?? ''}
-                                        onChange={(e) => setRegexPlaceholder({ ...regexPlaceholder, group: e.target.value })}
-                                        placeholder="0 = match inteiro, 1..n ou nome"
+                                        value={regexPlaceholder.template ?? ''}
+                                        onChange={(e) => setRegexPlaceholder({ ...regexPlaceholder, template: e.target.value })}
+                                        placeholder="Ex: ${nome}, ${1}, ${0}"
                                     />
                                 </td>
 
@@ -369,7 +464,7 @@ export default function Agents() {
                         className="input"
                         value={regexExampleText}
                         onChange={(e) => setRegexExampleText(e.target.value)}
-                        rows={6}
+                        rows={3}
                         placeholder="Cole aqui um texto real para testar a regex."
                     />
                     </div>
@@ -379,11 +474,11 @@ export default function Agents() {
                     <>
                         <div className="field">
                             <label>System Prompt:</label>
-                            <textarea className="input" rows={5} value={promptSystem} onChange={(e) => setPromptSystem(e.target.value)} />
+                            <textarea className="input" rows={3} value={promptSystem} onChange={(e) => setPromptSystem(e.target.value)} />
                         </div>
                         <div className="field">
                             <label>User Prompt:</label>
-                            <textarea className="input" rows={3} value={promptUser} onChange={(e) => setPromptUser(e.target.value)} />
+                            <textarea className="input" rows={2} value={promptUser} onChange={(e) => setPromptUser(e.target.value)} />
                         </div>
                     </>
                 )}
@@ -394,9 +489,74 @@ export default function Agents() {
                         <input className="input" value={funcName} onChange={(e) => setFuncName(e.target.value)} />
                     </div><div className="field">
                         <label>Código JS:</label>
-                        <textarea className="input" rows={7} value={funcCode} onChange={(e) => setFuncCode(e.target.value)} />
+                        <textarea className="input" rows={4} value={funcCode} onChange={(e) => setFuncCode(e.target.value)} />
                     </div>
                 </>
+                )}
+                {editing.type === 'const' && (
+                  <div className="field">
+                      <label>Valor Constante:</label>
+                      <textarea
+                          className="input"
+                          rows={8}
+                          value={editing.value ?? ''}
+                          onChange={(e) => setEditing({ ...editing, value: e.target.value })}
+                      />
+                  </div>
+                )}
+                {editing.type === 'restapi' && (
+                  <>
+                    <div className="grid-2">
+                      <div className="field">
+                          <label>URL do Endpoint:</label>
+                          <input
+                              className="input"
+                              value={editing.endpoint ?? ''}
+                              onChange={(e) => setEditing({ ...editing, endpoint: e.target.value })}
+                          />
+                      </div>
+                      <div className="field">
+                          <label>Método:</label>
+                          <select
+                              className="input"
+                              value={editing.method ?? 'POST'}
+                              onChange={(e) => setEditing({ ...editing, method: e.target.value })}
+                          >
+                              <option value="GET">GET</option>
+                              <option value="POST">POST</option>
+                              <option value="PUT">PUT</option>
+                              <option value="DELETE">DELETE</option>
+                              <option value="PATCH">PATCH</option>
+                              <option value="OPTIONS">OPTIONS</option>
+                          </select>
+                      </div>
+                    </div>
+                    <div className="grid-2">
+                    <div className="field">
+                        <label>Headers (JSON):</label>
+                        <textarea
+                            className="input"
+                            rows={4}
+                            value={JSON.stringify(editing.headers ?? {}, null, 2)}
+                            onChange={(e) => {
+                                try {
+                                  const headers = JSON.parse(e.target.value);
+                                  setEditing({ ...editing, headers });
+                                } catch {}
+                            }}
+                        />
+                    </div>
+                    <div className="field">
+                        <label>Body (JSON):</label>
+                        <textarea
+                            className="input"
+                            rows={4}
+                            value={editing.strJsonBody ?? ''}
+                            onChange={(e) => setEditing({ ...editing, strJsonBody: e.target.value })}
+                        />
+                    </div>
+                    </div>
+                  </>
                 )}
 
                 {/* Parâmetros */}
@@ -406,21 +566,22 @@ export default function Agents() {
                         <button className='btn btn-tool add' style={{ marginLeft:3,  display:'inline'}} onClick={addParam}>➕</button>
                         <button className='btn btn-tool test' style={{ marginLeft:3,  display:'inline'}} onClick={testAgent}>🧪</button>
                     </div>
-                    {testResult && (
-                    <div style={{ marginTop: 16 }}>
-                        <h4>Resultado</h4>
-                        <p>Status: <strong>{testResult.status}</strong></p>
-                        {testResult.error && <p className="error">Erro: {testResult.error}</p>}
-                        <div className="card">
-                        <pre>{testResult.value}</pre>
-                        </div>
-                    </div>
+                    {testResult && testResult.status !== 'matched_non_empty' &&  testResult.status !== 'matched_empty' ? (
+                      <div className="error">
+                        <strong>Erro:</strong>
+                        <pre>{testResult.error}</pre>
+                      </div>
+                    ) : (
+                      <div className="card">
+                        <label>Resultado:</label>
+                        <pre>{testResult?.value}</pre>
+                      </div>
                     )}
-                    <div style={{ marginTop:"0.5em", height:"6em", overflowY: "overlay" }}>
+                    <div style={{ marginTop:"0.5em", height:"6em", overflowY: 'auto' }}>
                     {agentParams.map((param, idx) => (
                     <div key={idx} style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
                         <input
-                        className="input"
+                        className={`input ${isDuplicatedParamName(param.name) || !isValidIdentifier(param.name) ? 'input-error' : ''}`}
                         placeholder="nome"
                         value={param.name}
                         onChange={(e) => {
@@ -495,11 +656,16 @@ export default function Agents() {
                 <button onClick={() => { setIsTesting(null); setTestResult(null); }}>❌ Fechar</button>
                 </div>
 
-                {testResult && (
-                <div className="output" style={{ marginTop: 16 }}>
-                    <label>Resposta:</label>
-                    <pre>{testResult}</pre>
-                </div>
+                {testResult && testResult.status !== 'matched_empty' && testResult.status !== 'matched_non_empty'   ? (
+                  <div className="error">
+                    <strong>Erro:</strong>
+                    <pre>{testResult.error}</pre>
+                  </div>
+                ) : (
+                  <div>
+                    <label>Resultado:</label>
+                    <pre>{testResult?.value}</pre>
+                  </div>
                 )}
             </div>
             </div>

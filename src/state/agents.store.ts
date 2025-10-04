@@ -7,25 +7,37 @@ type AgentStore = {
   agents: AgentTool[];
   setAgents: (agents: AgentTool[]) => void;
   addAgent: (agent: AgentTool) => void;
-  updateAgent: (name: string, updated: AgentTool) => void;
-  removeAgent: (name: string) => void;
+  updateAgent: (id: string, updated: AgentTool) => void;
+  removeAgent: (id: string) => void;
   reset: () => void;
 };
 
 export const useAgentsStore = create<AgentStore>(
   immer((set) => ({
     agents: [],
-    setAgents: (agents:AgentTool[]) => set({ agents }),
+    //setAgents: (agents:AgentTool[]) => set({ agents }),
+      setAgents: (agents: AgentTool[]) => {
+      const validatedAgents = agents.map((agent) => {
+        if (!agent.id) {
+          return {
+            ...agent,
+            id: crypto.randomUUID(),
+          };
+        }
+        return agent;
+      });
+      set({ agents: validatedAgents });
+    },
     addAgent: (agent:AgentTool) => set((s:AgentStore) => ({ agents: [...s.agents, agent] })),
 
-    updateAgent: (name:string, updated:AgentStore) =>
+    updateAgent: (id:string, updated:AgentStore) =>
       set((s:AgentStore) => ({
-        agents: s.agents.map((a) => (a.name === name ? updated : a)),
+        agents: s.agents.map((a) => (a.id === id ? updated : a)),
       })),
 
-    removeAgent: (name:string) =>
+    removeAgent: (id:string) =>
       set((s:AgentStore) => ({
-        agents: s.agents.filter((a) => a.name !== name),
+        agents: s.agents.filter((a) => a.id !== id),
       })),
     reset: () => set((s:AgentStore) => { 
        s.agents = []; 

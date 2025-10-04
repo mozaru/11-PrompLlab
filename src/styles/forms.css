@@ -13,6 +13,10 @@ label { font-size: 14px; color: var(--text); }
   border-radius: 6px; background: var(--panel-2); color: var(--text);
 }
 
+.input-error {
+  border-color: red;
+}
+
 .control {
   height: 40px; padding: 8px 12px;
 }
@@ -23,7 +27,7 @@ select.input { height: 40px; }
 
 textarea.input {
   height: auto;          
-  min-height: 160px;    
+  min-height: 50px;    
   resize: vertical;
   line-height: 1.4;
   width: 100%;

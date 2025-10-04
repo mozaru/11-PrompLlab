@@ -7,6 +7,7 @@ export type Placeholder = {
   default?: string;
   /** Grupo a retornar: número (0..n) ou nome de grupo nomeado. Omissão => 0 (match inteiro) */
   group?: number | string;
+  template?:string;
 };
 
 export type TestStatus =
