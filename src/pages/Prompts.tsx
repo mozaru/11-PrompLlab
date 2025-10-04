@@ -9,7 +9,7 @@ import '../styles/forms.css';
 import '../styles/design.css';
 
 export default function Prompts() {
-  const { systemPrompt, userTemplate, setSystem, setUserTpl } = usePrompts();
+  const { systemPrompt, knowledgeBase, userTemplate, setSystem, setKnowledgeBase, setUserTpl } = usePrompts();
   const syncFromTemplate = usePlaceholders((s) => s.syncFromTemplate);
   const navigate = useNavigate();
 
@@ -59,7 +59,7 @@ export default function Prompts() {
           Use <b>Exportar JSON</b> para salvar em arquivo ou <b>Restaurar do local</b> para reverter ao último salvo automaticamente.
         </p>
         <p className="muted">
-          Defina o System Prompt e o User Prompt Template (com <code>{'{{placeholders}}'}</code> se desejar).
+          Defina o System Prompt, o Base de Conhecimento (sem placeholders) e o User Prompt Template (com <code>{'{{placeholders}}'}</code> se desejar).
         </p>
 
         <section className="group">
@@ -71,6 +71,18 @@ export default function Prompts() {
             value={systemPrompt}
             onChange={(e) => setSystem(e.target.value)}
           />
+        </section>
+        
+        <section className="group">
+          <h2>📚 Base de Conhecimento</h2>
+          <textarea
+            className="input"
+            style={{ minHeight: 140 }}
+            placeholder="Cole aqui definições, fatos, políticas, glossário, etc. (sem placeholders)."
+            value={knowledgeBase}
+            onChange={(e) => setKnowledgeBase(e.target.value)}
+          />
+          <p className="hint">Este conteúdo não aparece no chat/histórico; ele é enviado à LLM após a pergunta do usuário, como <code>assistant</code>.</p>
         </section>
 
         <section className="group">

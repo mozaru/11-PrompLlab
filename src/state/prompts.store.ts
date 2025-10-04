@@ -2,19 +2,28 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 type PromptsState = {
-  systemPrompt: string;
-  userTemplate: string;
-  setSystem: (v: string) => void;
-  setUserTpl: (v: string) => void;
-  reset: () => void;
+   systemPrompt: string;
+   knowledgeBase: string;
+   userTemplate: string;
+   setSystem: (v: string) => void;
+   setKnowledgeBase: (v: string) => void;
+   setUserTpl: (v: string) => void;
+   reset: () => void;
 };
 
 export const usePrompts = create<PromptsState>()(
-  immer((set) => ({
-    systemPrompt: '',
-    userTemplate: '',
-    setSystem: (v) => set((s) => void (s.systemPrompt = v)),
-    setUserTpl: (v) => set((s) => void (s.userTemplate = v)),
-    reset: () => set((s) => { s.systemPrompt = ''; s.userTemplate = ''; }),
-  }))
+   immer((set) => ({
+     systemPrompt: '',
+     knowledgeBase: '',
+     userTemplate: '',
+     setSystem: (v:string) => set((s:PromptsState) => void (s.systemPrompt = v)),
+     setKnowledgeBase: (v:string) => set((s:PromptsState) => void (s.knowledgeBase = v)),
+     setUserTpl: (v:string) => set((s:PromptsState) => void (s.userTemplate = v)),
+     reset: () => set((s:PromptsState) => { 
+       s.systemPrompt = ''; 
+       s.knowledgeBase = ''; 
+       s.userTemplate = ''; 
+     }),
+   }))
 );
+

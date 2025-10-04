@@ -28,7 +28,20 @@
 * { box-sizing: border-box; }
 html, body, #root { 
     min-height: 100vh;
-    width: 100vw; 
+    width: 100%; 
+}
+
+.page.compacto {
+  --container-max: 900px;
+}
+.page.medio {
+  --container-max: 1200px;
+}
+.page.large {
+  --container-max: 1600px;
+}
+.page.full {
+  --container-max: 100%;
 }
 
 .welcome-root,
@@ -68,10 +81,20 @@ a:hover { text-decoration: underline; }
 .btn-primary:hover { filter: brightness(1.05); }
 .btn-secondary { background: var(--panel); }
 
+
 .btn-danger {
   background: #f44336; border-color: #f44336; color: #fff;
 }
 .btn-danger:hover { filter: brightness(1.05); }
+
+
+.btn-tool-bar { gap: 0.3em; display: flex; }
+.btn-tool { --fg: #fff; --bg:var(--panel); background: var(--bg); color: #ccc;  border-color:var(--fg); width:2.5em; height: 2.5em; padding: 0; margin: auto;}
+.btn-tool:hover { background-color: color-mix(in srgb, var(--bg) 30%, var(--fg) 70%); border-color:var(--fg);}
+.remove { --fg:#f44336; }
+.test {  --fg:#49c812; }
+.edit {  --fg:#cdc417; }
+.add {  --fg: var(--accent); }
 
 .welcome-main { display: grid; gap: 16px; grid-template-columns: 1fr; }
 .card {

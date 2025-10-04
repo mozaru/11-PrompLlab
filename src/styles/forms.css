@@ -1,4 +1,4 @@
-.page { max-width: 900px; margin: 0 auto; padding: 24px; }
+/*.page { max-width: 900px; margin: 0 auto; padding: 24px; }*/
 .form h1 { margin: 0 0 8px; font-size: 24px; }
 .form h2 { margin: 16px 0 8px; font-size: 18px; }
 .muted { color: var(--text-2); margin-top: 0; }
@@ -12,6 +12,11 @@ label { font-size: 14px; color: var(--text); }
   height: 40px; padding: 8px 12px; border: 1px solid var(--border);
   border-radius: 6px; background: var(--panel-2); color: var(--text);
 }
+
+.control {
+  height: 40px; padding: 8px 12px;
+}
+
 .input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(38,166,154,0.25); }
 
 select.input { height: 40px; }

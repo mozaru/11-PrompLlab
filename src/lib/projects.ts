@@ -2,7 +2,9 @@
 import { caps } from './capabilities';
 import { usePrompts } from '../state/prompts.store';
 import { usePlaceholders } from '../state/placeholders.store';
+import { useAgentsStore } from '../state/agents.store';
 import type { RegexFlag } from '../types/placeholders';
+import type { AgentTool } from '../types/chat';
 
 const LS_KEY = '11promptlab:last_profile_v1';
 
@@ -14,6 +16,7 @@ export type PromptsRegexV1 = {
   updatedAt: string; // ISO
   prompts: {
     system: string;
+    knowledge_base?: string; 
     user_template: string;
   };
   /** Texto de exemplo usado na tela de Regex (opcional p/ compatibilidade) */
@@ -25,12 +28,14 @@ export type PromptsRegexV1 = {
     default?: string;
     group?: number | string;
   }>;
+  agents?: AgentTool[];
 };
 
 // --------- build -> coleta atual dos stores ----------
 export function buildPromptsRegex(): PromptsRegexV1 {
-  const { systemPrompt, userTemplate } = usePrompts.getState();
+  const { systemPrompt, knowledgeBase, userTemplate } = usePrompts.getState();
   const phStore = usePlaceholders.getState();
+  const agentStore = useAgentsStore.getState();
   const phs = phStore.placeholders;
 
   return {
@@ -40,6 +45,7 @@ export function buildPromptsRegex(): PromptsRegexV1 {
     updatedAt: new Date().toISOString(),
     prompts: {
       system: systemPrompt ?? '',
+      knowledge_base: knowledgeBase ?? '',
       user_template: userTemplate ?? '',
     },
     example_text: phStore.exampleText ?? '',
@@ -50,6 +56,7 @@ export function buildPromptsRegex(): PromptsRegexV1 {
       default: p.default ?? '',
       group: p.group,
     })),
+    agents: agentStore.agents ?? [],
   };
 }
 
@@ -57,9 +64,11 @@ export function buildPromptsRegex(): PromptsRegexV1 {
 export function applyPromptsRegex(data: PromptsRegexV1) {
   const prompts = usePrompts.getState();
   const phStore = usePlaceholders.getState();
+  const agentStore = useAgentsStore.getState();
 
   // 1) prompts
   prompts.setSystem(data.prompts.system ?? '');
+  prompts.setKnowledgeBase(data.prompts.knowledge_base ?? '');
   prompts.setUserTpl(data.prompts.user_template ?? '');
 
   // 2) texto de exemplo (se vier)
@@ -76,6 +85,7 @@ export function applyPromptsRegex(data: PromptsRegexV1) {
       group: item.group,
     });
   }
+  agentStore.setAgents(data.agents ?? []);
 }
 
 // --------- validação básica ----------

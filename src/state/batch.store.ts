@@ -4,11 +4,10 @@ import { nanoid } from 'nanoid';
 import type { BatchConfig, BatchJob } from '../types/batch';
 import { ENV } from '../lib/env';
 import { useSettings } from './settings.store';
+import { useAgentsStore } from './agents.store';
 import { usePrompts } from './prompts.store';
-import { usePlaceholders } from './placeholders.store';
-import { renderTemplate } from '../lib/template/render';
 import { compileContext } from '../lib/context/compile';
-import { openaiChat } from '../adapters/model-client/openai';
+import { openaiChat, openaiChatWithAgent, type OpenAIChatParams } from '../adapters/model-client/openai';
 import { fsa, type FsaDirHandle } from '../adapters/fs/fsa';
 import { readFileAsText } from '../lib/encoding';
 import { buildZipFromTextMap, downloadZip } from '../lib/zip';
@@ -240,8 +239,9 @@ export const useBatch = create<BatchState>()(
       if (!apiKey) throw new Error('API key ausente.');
       const baseUrl = settings.cfg.openai.base_url ?? 'https://api.openai.com';
       const model   = settings.cfg.openai.model_default;
+      const agents  = useAgentsStore.getState().agents;
 
-      const { systemPrompt, userTemplate } = usePrompts.getState();
+      const { systemPrompt, knowledgeBase, userTemplate } = usePrompts.getState();
       if (!userTemplate?.trim()) throw new Error('User Template vazio. Defina em Prompts.');
 
       const vector = s.vector;
@@ -294,28 +294,21 @@ export const useBatch = create<BatchState>()(
           const text = item.content ?? '';
           updateJob(idx, { bytesIn: text.length });
 
-          // placeholders do content
-          const ph = usePlaceholders.getState();
-          const values = await ph.valuesFromText(text);
-
-          // renderiza template
-          const userMsg = renderTemplate(userTemplate, values, { keepUnresolved: true });
-
           // contexto (sem histórico)
-          const ctx = compileContext({
+          const ctx = await compileContext({
             systemPrompt,
             messages: [],
             useHistory: false,
-            userTemplate: userMsg,
+            userTextRaw: text,
+            userTemplate,
             injectUserFromTemplate: true,
+            baseKnowledge: knowledgeBase,
           });
-
-          // chamada ao modelo
-          const reply = await openaiChat(
-            { apiKey, baseUrl, model, temperature: 0.2, maxTokens: 2000 },
-            ctx
-          );
-
+          
+          const params: OpenAIChatParams = {apiKey, baseUrl, model, temperature: 0.2, maxTokens: 2000 };
+          
+          const reply = agents ? await openaiChatWithAgent(params, ctx, agents ) : await openaiChat(params, ctx ) ;
+         
           if (s.mode === 'zip') {
             if (zipOutputs[job.outputName] == null) {
               zipOutputs[job.outputName] = reply;

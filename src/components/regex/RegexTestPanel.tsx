@@ -80,5 +80,6 @@ function human(s: TestResult['status']): string {
     case 'matched_empty': return 'match (vazio)';
     case 'no_match': return 'sem match';
     case 'invalid_regex': return 'regex inválida';
+    default : return '';
   }
 }

@@ -8,6 +8,7 @@ export function NavBar() {
     { to: '/chat',     label: 'Chat' },
     { to: '/prompts',  label: 'Prompts' },
     { to: '/regex',    label: 'Regex' },
+    { to: '/agents',   label: 'Agents' },
     { to: '/batch',    label: 'Batch' },
     { to: '/history',  label: 'Histórico' },
     { to: '/config',   label: 'Config' },

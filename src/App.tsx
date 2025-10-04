@@ -4,19 +4,21 @@ import Welcome from './pages/Welcome';
 import Config from './pages/Config';
 import Chat from './pages/Chat';
 import Prompts from './pages/Prompts';
-import RegexPage from './pages/Regex';
+import Regex from './pages/Regex';
+import Agents from './pages/Agents';
 import Batch from './pages/Batch';
 import History from './pages/History';
 import { NavBar } from './components/NavBar';
 import { savePromptsRegexToLocal, loadPromptsRegexFromLocal, applyPromptsRegex } from './lib/projects';
 
-type View = 'welcome' | 'config' | 'chat' | 'prompts' | 'regex' | 'batch' | 'history';
+type View = 'welcome' | 'config' | 'chat' | 'prompts' | 'regex' | 'agents' | 'batch' | 'history';
 
 function pathToView(pathname: string): View {
   if (pathname.startsWith('/config'))  return 'config';
   if (pathname.startsWith('/chat'))    return 'chat';
   if (pathname.startsWith('/prompts')) return 'prompts';
   if (pathname.startsWith('/regex'))   return 'regex';
+  if (pathname.startsWith('/agents'))  return 'agents';
   if (pathname.startsWith('/batch'))   return 'batch';
   if (pathname.startsWith('/history')) return 'history';
   return 'welcome';
@@ -56,7 +58,8 @@ export default function App() {
         <Route path="/config" element={<Config />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/prompts" element={<Prompts />} />
-        <Route path="/regex" element={<RegexPage />} />
+        <Route path="/regex" element={<Regex />} />
+        <Route path="/agents" element={<Agents />} />
         <Route path="/batch" element={<Batch />} />
         <Route path="/history" element={<History />} />
         {/* fallback */}

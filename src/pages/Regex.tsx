@@ -7,11 +7,11 @@ import { RegexTestPanel } from '../components/regex/RegexTestPanel';
 import { ActionBar, type AppAction, type AppActionId } from '../components/ActionBar';
 import { savePromptsRegexToDisk, openPromptsRegexFromDisk, applyPromptsRegex } from '../lib/projects';
 
+import '../styles/design.css';
 import '../styles/forms.css';
 import '../styles/regex.css';
-import '../styles/design.css';
 
-export default function RegexPage() {
+export default function Regex() {
   const phs = usePlaceholders((s) => s.placeholders);
   const results = usePlaceholders((s) => s.results);
   const runOne = usePlaceholders((s) => s.runTestOne);
@@ -52,7 +52,7 @@ export default function RegexPage() {
   };
 
   return (
-    <div className="page">
+    <div className="page large">
       <div className="card form">
         <h1>Regex & Defaults</h1>
         <p className="muted">Configure as regex e valores default para preencher os placeholders do User Template.</p>

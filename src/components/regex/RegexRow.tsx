@@ -66,8 +66,10 @@ export function RegexRow({ ph, result, onTest }: {
         />
       </td>
       <td className="actions">
-        <button className="btn btn-secondary" onClick={() => onTest(ph.name)}>Testar</button>
-        <button className="btn btn-danger" onClick={() => remove(ph.name)}>Remover</button>
+        <div className='btn-tool-bar'>
+        <button className="btn btn-tool test" onClick={() => onTest(ph.name)}>🧪</button>
+        <button className="btn btn-tool remove" onClick={() => remove(ph.name)}>🗑</button>
+        </div>
       </td>
       <td className="status">
         {result ? (
