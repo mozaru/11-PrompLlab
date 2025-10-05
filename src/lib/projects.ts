@@ -5,6 +5,8 @@ import { usePlaceholders } from '../state/placeholders.store';
 import { useAgentsStore } from '../state/agents.store';
 import type { RegexFlag } from '../types/placeholders';
 import type { AgentTool } from '../types/chat';
+import type { MCPInfo } from '../types/mcp';
+import { useMCPStore } from '../state/mcp.store';
 
 const LS_KEY = '11promptlab:last_profile_v1';
 
@@ -29,6 +31,7 @@ export type PromptsRegexV1 = {
     group?: number | string;
   }>;
   agents?: AgentTool[];
+  mcps?: MCPInfo[];
 };
 
 // --------- build -> coleta atual dos stores ----------
@@ -36,6 +39,7 @@ export function buildPromptsRegex(): PromptsRegexV1 {
   const { systemPrompt, knowledgeBase, userTemplate } = usePrompts.getState();
   const phStore = usePlaceholders.getState();
   const agentStore = useAgentsStore.getState();
+  const mcpStore = useMCPStore.getState();
   const phs = phStore.placeholders;
 
   return {
@@ -57,6 +61,7 @@ export function buildPromptsRegex(): PromptsRegexV1 {
       group: p.group,
     })),
     agents: agentStore.agents ?? [],
+    mcps: mcpStore.mcps ?? [],
   };
 }
 
@@ -65,6 +70,7 @@ export function applyPromptsRegex(data: PromptsRegexV1) {
   const prompts = usePrompts.getState();
   const phStore = usePlaceholders.getState();
   const agentStore = useAgentsStore.getState();
+  const mcpStore = useMCPStore.getState();
 
   // 1) prompts
   prompts.setSystem(data.prompts.system ?? '');
@@ -86,6 +92,7 @@ export function applyPromptsRegex(data: PromptsRegexV1) {
     });
   }
   agentStore.setAgents(data.agents ?? []);
+  mcpStore.setMCPs(data.mcps ?? []);
 }
 
 // --------- validação básica ----------
@@ -96,9 +103,10 @@ function isPromptsRegexV1(obj: any): obj is PromptsRegexV1 {
     obj.version === '1.0' &&
     obj.prompts &&
     typeof obj.prompts.system === 'string' &&
-    typeof obj.prompts.user_template === 'string' &&
-    Array.isArray(obj.placeholders)
-    // example_text é opcional
+    typeof obj.prompts.user_template === 'string' 
+    && Array.isArray(obj.placeholders)
+    && (obj.agents === undefined || Array.isArray(obj.agents))
+    && (obj.mcps === undefined || Array.isArray(obj.mcps))
   );
 }
 

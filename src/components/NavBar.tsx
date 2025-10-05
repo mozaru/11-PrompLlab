@@ -9,6 +9,7 @@ export function NavBar() {
     { to: '/prompts',  label: 'Prompts' },
     { to: '/regex',    label: 'Regex' },
     { to: '/agents',   label: 'Agents' },
+    { to: '/mcps',     label: 'Mcps' },
     { to: '/batch',    label: 'Batch' },
     { to: '/history',  label: 'Histórico' },
     { to: '/config',   label: 'Config' },
